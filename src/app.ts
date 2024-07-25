@@ -1,6 +1,7 @@
 import express, { Express, Request, Response } from "express";
 import dotenv from "dotenv";
 import { dbConnection } from "./database/config";
+import { routerAuth } from "./routes/auth";
 
 dotenv.config();
 
@@ -18,6 +19,7 @@ app.use(express.static("public"));
 app.use(express.json());
 
 /** Routes */
+app.use("/api/auth", routerAuth);
 app.get("/", (req: Request, res: Response) => {
   res.send("Express + TypeScript Server");
 });
