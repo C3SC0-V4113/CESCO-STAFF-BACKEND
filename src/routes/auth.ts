@@ -3,6 +3,8 @@ import { check } from "express-validator";
 import { validateFields } from "../middlewares/validate-fields";
 import {
   createUser,
+  deleteUser,
+  getUsers,
   loginUser,
   revalidateToken,
   updateUser,
@@ -46,19 +48,25 @@ routerAuth.post(
 );
 
 routerAuth.put(
-  "/edit",
+  "/:id",
   [
     /** Middlewares */
     check("name", "El nombre es obligatorio").not().isEmpty(),
     check("email", "El email es obligatorio").isEmail(),
-    check("password", "La contraseña debe ser de 6 caracteres").isLength({
-      min: 6,
-    }),
+    check("password", "La contraseña debe ser de 6 caracteres")
+      .isLength({
+        min: 6,
+      })
+      .optional(),
     check("role", "El rol es obligatorio").not().isEmpty(),
     validateFields,
   ],
   updateUser
 );
+
+routerAuth.delete("/:id", deleteUser);
+
+routerAuth.get("/", getUsers);
 
 routerAuth.get(
   "renew",

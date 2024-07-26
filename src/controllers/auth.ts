@@ -3,7 +3,6 @@ import User from "../models/User";
 import { compareSync, genSaltSync, hashSync } from "bcryptjs";
 import generateJWT from "../helpers/jwt";
 import { IGetUserRequest } from "../interfaces/IUser";
-import { ok } from "assert";
 
 const createUser = async (req: Request, res: Response) => {
   const { email, password } = req.body;
@@ -97,7 +96,15 @@ const updateUser = async (req: Request, res: Response) => {
       });
     }
 
-    const newUser = { ...req.body };
+    /** Encrypt password */
+    const salt = genSaltSync();
+
+    const newUser = {
+      ...req.body,
+      password: req.body.password
+        ? hashSync(req.body.password, salt)
+        : req.body.password,
+    };
 
     const userUpdated = await User.findByIdAndUpdate(userID, newUser, {
       new: true,
@@ -107,6 +114,38 @@ const updateUser = async (req: Request, res: Response) => {
       ok: true,
       user: userUpdated,
     });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      ok: false,
+      msg: "Please contact the administrator",
+    });
+  }
+};
+
+const deleteUser = async (req: Request, res: Response) => {
+  const userId = req.params.id;
+  try {
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({
+        ok: false,
+        msg: "User not found",
+      });
+    }
+
+    await User.findByIdAndDelete(userId);
+
+    res.status(200).json({
+      ok: true,
+    });
+  } catch (error) {}
+};
+
+const getUsers = async (req: Request, res: Response) => {
+  try {
+    const users = await User.find();
+    res.status(201).json({ ok: true, users });
   } catch (error) {
     console.error(error);
     res.status(500).json({
@@ -130,4 +169,11 @@ const revalidateToken = async (req: Request, res: Response) => {
   });
 };
 
-export { createUser, loginUser, revalidateToken, updateUser };
+export {
+  createUser,
+  loginUser,
+  revalidateToken,
+  updateUser,
+  getUsers,
+  deleteUser,
+};
