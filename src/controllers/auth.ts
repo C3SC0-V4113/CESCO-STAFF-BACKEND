@@ -155,6 +155,20 @@ const getUsers = async (req: Request, res: Response) => {
   }
 };
 
+const getUserById = async (req: Request, res: Response) => {
+  const userId = req.params.id;
+  try {
+    const user = await User.findById(userId);
+    res.status(201).json({ ok: true, user });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      ok: false,
+      msg: "Please contact the administrator",
+    });
+  }
+};
+
 const revalidateToken = async (req: Request, res: Response) => {
   const { uid, name } = req as IGetUserRequest;
 
@@ -171,9 +185,10 @@ const revalidateToken = async (req: Request, res: Response) => {
 
 export {
   createUser,
+  deleteUser,
+  getUserById,
+  getUsers,
   loginUser,
   revalidateToken,
   updateUser,
-  getUsers,
-  deleteUser,
 };

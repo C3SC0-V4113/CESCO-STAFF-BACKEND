@@ -35,6 +35,23 @@ const getClients = async (req: Request, res: Response) => {
   }
 };
 
+const getClientById = async (req: Request, res: Response) => {
+  const clientId = req.params.id;
+  try {
+    const client = await Client.findById(clientId);
+    res.status(201).json({
+      ok: true,
+      client,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      ok: false,
+      msg: "Please contact the administrator",
+    });
+  }
+};
+
 const updateClient = async (req: Request, res: Response) => {
   const clientId = req.params.id;
 
@@ -92,4 +109,4 @@ const deleteClient = async (req: Request, res: Response) => {
   }
 };
 
-export { createClient, getClients, deleteClient, updateClient };
+export { createClient, getClients, deleteClient, updateClient, getClientById };

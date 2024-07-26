@@ -3,6 +3,7 @@ import { check } from "express-validator";
 import {
   createClient,
   deleteClient,
+  getClientById,
   getClients,
   updateClient,
 } from "../controllers/client";
@@ -41,5 +42,7 @@ routerClient.put(
 routerClient.delete("/:id", deleteClient);
 
 routerClient.get("/", getClients);
+
+routerClient.get("/:id", getClientById);
 
 export { routerClient };
