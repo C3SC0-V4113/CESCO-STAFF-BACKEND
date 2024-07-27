@@ -7,6 +7,8 @@ import {
   getClients,
   updateClient,
 } from "../controllers/client";
+import { validateJWT } from "../middlewares/validate-jwt";
+import { validateRole } from "../middlewares/validate-role";
 
 const routerClient = Router();
 
@@ -24,6 +26,8 @@ routerClient.post(
     check("address", "La dirección es obligatoria").not().isEmpty(),
     check("phone", "El telefono es obligatorio").isMobilePhone("any"),
   ],
+  validateJWT,
+  validateRole,
   createClient
 );
 
@@ -36,13 +40,15 @@ routerClient.put(
     check("address", "La dirección es obligatoria").not().isEmpty(),
     check("phone", "El telefono es obligatorio").isMobilePhone("any"),
   ],
+  validateJWT,
+  validateRole,
   updateClient
 );
 
-routerClient.delete("/:id", deleteClient);
+routerClient.delete("/:id", validateJWT, validateRole, deleteClient);
 
-routerClient.get("/", getClients);
+routerClient.get("/", validateJWT, getClients);
 
-routerClient.get("/:id", getClientById);
+routerClient.get("/:id", validateJWT, getClientById);
 
 export { routerClient };

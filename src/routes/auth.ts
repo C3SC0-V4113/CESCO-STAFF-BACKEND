@@ -12,6 +12,7 @@ import {
 } from "../controllers/auth";
 import { validateJWT } from "../middlewares/validate-jwt";
 import { IGetUserRequest } from "../interfaces/IUser";
+import { validateRole } from "../middlewares/validate-role";
 
 const routerAuth = Router();
 
@@ -32,6 +33,8 @@ routerAuth.post(
     check("role", "El rol es obligatorio").not().isEmpty(),
     validateFields,
   ],
+  validateJWT,
+  validateRole,
   createUser
 );
 
@@ -62,14 +65,15 @@ routerAuth.put(
     check("role", "El rol es obligatorio").not().isEmpty(),
     validateFields,
   ],
+  validateJWT,
   updateUser
 );
 
-routerAuth.delete("/:id", deleteUser);
+routerAuth.delete("/:id", validateJWT, validateRole, deleteUser);
 
-routerAuth.get("/", getUsers);
+routerAuth.get("/", validateJWT, validateRole, getUsers);
 
-routerAuth.get("/:id", getUserById);
+routerAuth.get("/:id", validateJWT, getUserById);
 
 routerAuth.get(
   "renew",

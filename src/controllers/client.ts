@@ -20,11 +20,25 @@ const createClient = async (req: Request, res: Response) => {
 };
 
 const getClients = async (req: Request, res: Response) => {
+  const { page = 1, limit = 10, name = "" } = req.query;
+  const pageNumber = parseInt(page as string, 10);
+  const limitNumber = parseInt(limit as string, 10);
+
   try {
-    const clients = await Client.find();
+    const clients = await Client.find({ name: new RegExp(name as string, "i") })
+      .skip((pageNumber - 1) * limitNumber)
+      .limit(limitNumber);
+
+    const total = await Client.countDocuments({
+      name: new RegExp(name as string, "i"),
+    });
+
     res.status(201).json({
       ok: true,
       clients,
+      total,
+      page: pageNumber,
+      limit: limitNumber,
     });
   } catch (error) {
     console.error(error);

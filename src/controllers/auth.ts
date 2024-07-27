@@ -87,6 +87,15 @@ const loginUser = async (req: Request, res: Response) => {
 
 const updateUser = async (req: Request, res: Response) => {
   const userID = req.params.id;
+  const { role, uid } = req as IGetUserRequest;
+
+  if (uid !== userID && role !== "admin") {
+    return res.status(403).json({
+      ok: false,
+      msg: "You can only update your own profile",
+    });
+  }
+
   try {
     const user = await User.findById(userID);
     if (!user) {
@@ -125,6 +134,15 @@ const updateUser = async (req: Request, res: Response) => {
 
 const deleteUser = async (req: Request, res: Response) => {
   const userId = req.params.id;
+  const { role } = req as IGetUserRequest;
+
+  if (role !== "admin") {
+    return res.status(403).json({
+      ok: false,
+      msg: "Only admins can delete users",
+    });
+  }
+
   try {
     const user = await User.findById(userId);
     if (!user) {
@@ -143,9 +161,22 @@ const deleteUser = async (req: Request, res: Response) => {
 };
 
 const getUsers = async (req: Request, res: Response) => {
+  const { page = 1, limit = 10, name = "" } = req.query;
+  const pageNumber = parseInt(page as string, 10);
+  const limitNumber = parseInt(limit as string, 10);
+
   try {
-    const users = await User.find();
-    res.status(201).json({ ok: true, users });
+    const users = await User.find({ name: new RegExp(name as string, "i") })
+      .skip((pageNumber - 1) * limitNumber)
+      .limit(limitNumber);
+
+    const total = await User.countDocuments({
+      name: new RegExp(name as string, "i"),
+    });
+
+    res
+      .status(201)
+      .json({ ok: true, users, total, page: pageNumber, limit: limitNumber });
   } catch (error) {
     console.error(error);
     res.status(500).json({
@@ -157,6 +188,15 @@ const getUsers = async (req: Request, res: Response) => {
 
 const getUserById = async (req: Request, res: Response) => {
   const userId = req.params.id;
+  const { role, uid } = req as IGetUserRequest;
+
+  if (uid !== userId && role !== "admin") {
+    return res.status(403).json({
+      ok: false,
+      msg: "You can only view your own profile",
+    });
+  }
+
   try {
     const user = await User.findById(userId);
     res.status(201).json({ ok: true, user });
