@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import { dbConnection } from "./database/config";
 import { routerAuth } from "./routes/auth";
 import { routerClient } from "./routes/client";
+import { routerEvents } from "./routes/event";
 
 dotenv.config();
 
@@ -22,6 +23,7 @@ app.use(express.json());
 /** Routes */
 app.use("/api/auth", routerAuth);
 app.use("/api/client", routerClient);
+app.use("/api/event", routerEvents);
 
 /** Listen Petitions */
 app.listen(port, () => {

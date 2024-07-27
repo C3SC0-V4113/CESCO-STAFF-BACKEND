@@ -5,6 +5,7 @@ type Role = "admin" | "user";
 export interface IGetUserRequest extends Request {
   uid: string;
   name: string;
+  role: Role;
 }
 
 export interface IUser {
