@@ -74,6 +74,7 @@ const loginUser = async (req: Request, res: Response) => {
       ok: true,
       uid: user.id,
       name: user.name,
+      role: user.role,
       token,
     });
   } catch (error) {
@@ -160,6 +161,22 @@ const deleteUser = async (req: Request, res: Response) => {
   } catch (error) {}
 };
 
+const getListUsers = async (req: Request, res: Response) => {
+  try {
+    const users = await User.find({}, "_id name");
+    res.status(201).json({
+      ok: true,
+      users,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      ok: false,
+      msg: "Please contact the administrator",
+    });
+  }
+};
+
 const getUsers = async (req: Request, res: Response) => {
   const { page = 1, limit = 10, name = "" } = req.query;
   const pageNumber = parseInt(page as string, 10);
@@ -228,6 +245,7 @@ export {
   deleteUser,
   getUserById,
   getUsers,
+  getListUsers,
   loginUser,
   revalidateToken,
   updateUser,

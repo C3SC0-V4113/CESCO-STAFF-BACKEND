@@ -5,6 +5,7 @@ import {
   deleteClient,
   getClientById,
   getClients,
+  getCountClients,
   updateClient,
 } from "../controllers/client";
 import { validateJWT } from "../middlewares/validate-jwt";
@@ -50,5 +51,7 @@ routerClient.delete("/:id", validateJWT, validateRole, deleteClient);
 routerClient.get("/", validateJWT, getClients);
 
 routerClient.get("/:id", validateJWT, getClientById);
+
+routerClient.post("/total", validateJWT, getCountClients);
 
 export { routerClient };

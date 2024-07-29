@@ -4,6 +4,7 @@ import { validateFields } from "../middlewares/validate-fields";
 import {
   createUser,
   deleteUser,
+  getListUsers,
   getUserById,
   getUsers,
   loginUser,
@@ -74,6 +75,8 @@ routerAuth.delete("/:id", validateJWT, validateRole, deleteUser);
 routerAuth.get("/", validateJWT, validateRole, getUsers);
 
 routerAuth.get("/:id", validateJWT, getUserById);
+
+routerAuth.post("/combo-users", validateJWT, getListUsers);
 
 routerAuth.get(
   "renew",
