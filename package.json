@@ -4,10 +4,16 @@
   "main": "dist/app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "npx tsc",
+    "build": "rimraf dist && tsc",
+    "ts.check": "tsc --project tsconfig.json",
+    "add-build": "git add dist",
     "start": "node dist/app.js",
     "dev": "nodemon src/app.ts"
   },
+  "pre-commit": [
+    "ts.check",
+    "build"
+  ],
   "keywords": [],
   "author": "CESCO",
   "license": "ISC",
