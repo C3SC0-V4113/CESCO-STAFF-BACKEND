@@ -164,9 +164,15 @@ const deleteUser = async (req: Request, res: Response) => {
 const getListUsers = async (req: Request, res: Response) => {
   try {
     const users = await User.find({}, "_id name");
+
+    const formattedUsers = users.map((user) => ({
+      label: user.name,
+      value: user._id,
+    }));
+
     res.status(201).json({
       ok: true,
-      users,
+      users: formattedUsers,
     });
   } catch (error) {
     console.error(error);

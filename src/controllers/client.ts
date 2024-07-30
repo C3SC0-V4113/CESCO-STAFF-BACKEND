@@ -83,6 +83,28 @@ const getCountClients = async (req: Request, res: Response) => {
   }
 };
 
+const getListClients = async (req: Request, res: Response) => {
+  try {
+    const clients = await Client.find({}, "_id name lastname");
+
+    const formattedClients = clients.map((user) => ({
+      label: user.name + " " + user.lastname,
+      value: user._id,
+    }));
+
+    res.status(201).json({
+      ok: true,
+      clients: formattedClients,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      ok: false,
+      msg: "Please contact the administrator",
+    });
+  }
+};
+
 const updateClient = async (req: Request, res: Response) => {
   const clientId = req.params.id;
 
@@ -147,4 +169,5 @@ export {
   getClients,
   getCountClients,
   updateClient,
+  getListClients,
 };
